@@ -260,6 +260,8 @@ if (prevSnapshot) {
   let ceFlow = 0;
   let peFlow = 0;
 
+  const strikeFlows = [];
+
   const snapshotWindow =
     rows.slice(
       Math.max(
@@ -312,6 +314,14 @@ if (prevSnapshot) {
 
   peFlow +=
     currentPE - previous.pe;
+
+    strikeFlows.push({
+  strike,
+  ceFlow:
+    currentCE - previous.ce,
+  peFlow:
+    currentPE - previous.pe
+});
 }
 
 const netFlow =
@@ -367,15 +377,16 @@ console.log(
     }
 
     await updateState({
-      expiry: activeExpiry.query,
-      atm,
-      price: spot,
-      snapshot: snapshotWindow,
-      ce_flow: ceFlow,
-      pe_flow: peFlow,
-      net_flow: netFlow,
-      cum_flow: cumFlow
-    });
+  expiry: activeExpiry.query,
+  atm,
+  price: spot,
+  snapshot: snapshotWindow,
+  strike_flows: strikeFlows,
+  ce_flow: ceFlow,
+  pe_flow: peFlow,
+  net_flow: netFlow,
+  cum_flow: cumFlow
+});
 
 
   console.log(
