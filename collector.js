@@ -152,12 +152,20 @@ async function main() {
     activeExpiry.query
   );
 
-  const state = await getState();
+      console.log("SUPABASE_URL =", SUPABASE_URL);
+    console.log(
+      "SERVICE KEY EXISTS =",
+      !!SUPABASE_SERVICE_KEY
+    );
 
-  const prevSnapshot = state.snapshot || null;
-  const prevCumFlow = Number(state.cum_flow || 0);
+    const { data, error } = await supabase
+      .from("eth_state")
+      .select("*");
 
-  console.log("Previous state loaded");
+    console.log("TEST DATA:", data);
+    console.log("TEST ERROR:", error);
+
+    return;
 
   console.log(
     "Contracts:",
