@@ -20,6 +20,13 @@ jobs:
         with:
           node-version: 22
 
+      - run: node -v
+
       - run: npm install
+
+      - run: npm list @supabase/supabase-js
+
+      - run: echo "URL=$SUPABASE_URL"
+        shell: bash
 
       - run: node collector.js
