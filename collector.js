@@ -181,6 +181,9 @@ const prevSnapshot =
 const prevCumFlow =
   Number(state.cum_flow || 0);
 
+  const prevNetFlow =
+  Number(state.net_flow || 0);
+
 console.log(
   "Previous state loaded"
 );
@@ -340,6 +343,16 @@ if (prevSnapshot) {
 const netFlow =
   peFlow - ceFlow;
 
+  const flowVelocity =
+  netFlow - prevNetFlow;
+
+const flowBias =
+  netFlow > 0
+    ? "BULLISH"
+    : netFlow < 0
+    ? "BEARISH"
+    : "NEUTRAL";
+
 const cumFlow =
   prevCumFlow + netFlow;
 
@@ -356,6 +369,16 @@ console.log(
 console.log(
   "Net Flow:",
   netFlow
+);
+
+console.log(
+  "Flow Velocity:",
+  flowVelocity
+);
+
+console.log(
+  "Flow Bias:",
+  flowBias
 );
 
 console.log(
@@ -395,9 +418,14 @@ console.log(
   price: spot,
   snapshot: snapshotWindow,
   strike_flows: strikeFlows,
+
   ce_flow: ceFlow,
   pe_flow: peFlow,
   net_flow: netFlow,
+
+  flow_velocity: flowVelocity,
+  flow_bias: flowBias,
+
   cum_flow: cumFlow
 });
 
