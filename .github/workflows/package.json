@@ -1,0 +1,12 @@
+{
+  "name": "eth-flow-pro",
+  "version": "1.0.0",
+  "main": "collector.js",
+  "type": "module",
+  "scripts": {
+    "start": "node collector.js"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.50.0"
+  }
+}
