@@ -51,7 +51,20 @@ function parseExpiry(symbol) {
 
 async function delta(path) {
   const res = await fetch(API_BASE + path);
-  const json = await res.json();
+
+const text = await res.text();
+
+console.log(
+  "Status:",
+  res.status
+);
+
+console.log(
+  "Response preview:",
+  text.slice(0, 300)
+);
+
+const json = JSON.parse(text);
 
   if (!json.success) {
     throw new Error(
