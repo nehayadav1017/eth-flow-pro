@@ -187,8 +187,28 @@ async function main() {
     ceFlow += ceDelta;
     peFlow += peDelta;
 
-    strikeFlows.push({ strike, ceFlow: ceDelta, peFlow: peDelta });
+const cePct =
+  currentCE > 0
+    ? (ceDelta / currentCE) * 100
+    : 0;
 
+const pePct =
+  currentPE > 0
+    ? (peDelta / currentPE) * 100
+    : 0;
+
+const flowPercent = pePct - cePct;
+
+strikeFlows.push({
+  strike,
+
+  ceFlow: ceDelta,
+  peFlow: peDelta,
+
+  cePct: Number(cePct.toFixed(2)),
+  pePct: Number(pePct.toFixed(2)),
+  flowPercent: Number(flowPercent.toFixed(2))
+});
     const strikeNetFlow = peDelta - ceDelta;
     if (strikeNetFlow > 0) bullishStrikes++;
     if (strikeNetFlow < 0) bearishStrikes++;
@@ -263,11 +283,8 @@ async function main() {
   bullish_strikes: bullishStrikes,
   bearish_strikes: bearishStrikes,
 
-  strongest_bull_strike:
-    strongestBullStrike,
-
-  strongest_bear_strike:
-    strongestBearStrike
+  strongest_bull_strike: strongestBullStrike,
+  strongest_bear_strike: strongestBearStrike
 });
 
   console.log("Snapshot saved");
