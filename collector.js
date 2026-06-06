@@ -106,6 +106,38 @@ async function getOptionChain(expiry) {
   );
 }
 
+function oiContracts(t) {
+  return Number(t.oi_contracts ?? t.oi ?? 0);
+}
+
+function volumeContracts(t) {
+  const volume = Number(t.volume || 0);
+  const cv = Number(t.contract_value || 0);
+
+  if (volume && cv) {
+    return Math.round(volume / cv);
+  }
+
+  return volume;
+}
+
+function covirRatio(oi, vol) {
+  return vol === 0 ? 0 : oi / vol;
+}
+
+function normalizePair(a, b) {
+  const total = a + b;
+
+  if (!total) {
+    return { a: 0, b: 0 };
+  }
+
+  return {
+    a: (a / total) * 100,
+    b: (b / total) * 100
+  };
+}
+
 async function main() {
   console.log("ETH collector started");
 
@@ -120,6 +152,13 @@ async function main() {
     activeExpiry.query
   );
 
+  const state = await getState();
+
+  const prevSnapshot = state.snapshot || null;
+  const prevCumFlow = Number(state.cum_flow || 0);
+
+  console.log("Previous state loaded");
+
   console.log(
     "Contracts:",
     chain.length
@@ -132,6 +171,97 @@ async function main() {
     ) || 0;
 
   console.log("Spot:", spot);
+
+      const strikes = {};
+
+    for (const t of chain) {
+      const strike = Number(t.strike_price);
+
+      if (!strike) continue;
+
+      if (!strikes[strike]) {
+        strikes[strike] = {
+          strike,
+          CE: null,
+          PE: null
+        };
+      }
+
+  if (t.contract_type === "call_options") {
+    strikes[strike].CE = t;
+  }
+
+  if (t.contract_type === "put_options") {
+    strikes[strike].PE = t;
+  }
+}
+
+const rows = Object.values(strikes)
+  .sort((a, b) => a.strike - b.strike);
+
+let atmIndex = 0;
+let best = Infinity;
+
+rows.forEach((r, i) => {
+  const diff = Math.abs(r.strike - spot);
+
+  if (diff < best) {
+    best = diff;
+    atmIndex = i;
+  }
+});
+
+const atm = rows[atmIndex].strike;
+
+console.log("ATM:", atm);
+
+const snapshotWindow = rows.slice(
+  Math.max(0, atmIndex - SNAPSHOT_STRIKES),
+  atmIndex + SNAPSHOT_STRIKES + 1
+);
+
+const graphWindow = rows.slice(
+  Math.max(0, atmIndex - GRAPH_STRIKES),
+  atmIndex + GRAPH_STRIKES + 1
+);
+
+console.log(
+  "Snapshot strikes:",
+  snapshotWindow.length
+);
+}
+async function getState() {
+  const { data, error } = await supabase
+    .from("eth_state")
+    .select("*")
+    .eq("id", 1)
+    .single();
+
+  if (error) throw error;
+
+  return data;
+}
+async function updateState(payload) {
+  const { error } = await supabase
+    .from("eth_state")
+    .update(payload)
+    .eq("id", 1);
+
+  if (error) throw error;
+}
+async function insertSnapshot(payload) {
+  const { error } = await supabase
+    .from("eth_snapshots")
+    .insert(payload);
+
+  if (error) throw error;
+}
+async function insertGraph(payload) {
+  const { error } = await supabase
+    .from("eth_graph")
+    .insert(payload);
+
+  if (error) throw error;
 }
 
 main().catch(err => {
