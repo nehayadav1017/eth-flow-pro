@@ -160,7 +160,7 @@ async function main() {
       activeExpiry.query
     );
 
-  const state = await getState();
+  const state = (await getState()) || {};
 
 const prevSnapshot =
   state.snapshot || null;
@@ -366,13 +366,16 @@ console.log(
       });
     }
 
-  await updateState({
-  expiry: activeExpiry.query,
-  atm,
-  price: spot,
-  snapshot: snapshotWindow,
-  cum_flow: cumFlow
-});
+    await updateState({
+      expiry: activeExpiry.query,
+      atm,
+      price: spot,
+      snapshot: snapshotWindow,
+      ce_flow: ceFlow,
+      pe_flow: peFlow,
+      net_flow: netFlow,
+      cum_flow: cumFlow
+    });
 
 
   console.log(
