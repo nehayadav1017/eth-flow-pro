@@ -268,12 +268,19 @@ async function main() {
     snapshot: snapshotWindow
   });
 
+    for (const row of graphWindow) {
   await insertGraph({
-    expiry: activeExpiry.query,
-    atm,
-    spot_price: spot,
-    snapshot: graphWindow
-  });
+        expiry: activeExpiry.query,
+        atm,
+        spot_price: spot,
+        ce_oi: row.CE
+          ? Number(row.CE.oi_contracts ?? row.CE.oi ?? 0)
+          : 0,
+        pe_oi: row.PE
+          ? Number(row.PE.oi_contracts ?? row.PE.oi ?? 0)
+          : 0
+      });
+    }
 
   await updateState({
     expiry: activeExpiry.query,
