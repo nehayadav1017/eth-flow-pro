@@ -1,1 +1,71 @@
-Hello
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>ETH Flow Dashboard</title>
+
+  <link rel="stylesheet" href="style.css">
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+
+<body>
+
+<h1>ETH FLOW DASHBOARD</h1>
+
+<div class="card">
+  <div class="label">Price</div>
+  <div id="price">Loading...</div>
+</div>
+
+<div class="card">
+  <div class="label">Market Bias</div>
+  <div id="bias">-</div>
+</div>
+
+<div class="card">
+  <div class="label">Signal</div>
+  <div id="signal">-</div>
+</div>
+
+<div class="card">
+  <div class="label">Next Move</div>
+  <div id="nextMove">-</div>
+</div>
+
+<div class="card">
+  <div class="label">Confidence</div>
+  <div id="confidence">-</div>
+</div>
+
+<div class="card">
+  <div class="label">ATM Pressure</div>
+  <div id="atmPressure">-</div>
+</div>
+
+<div class="card">
+  <div class="label">Net Flow</div>
+  <div id="netFlow">-</div>
+</div>
+
+<div class="card">
+  <div class="label">Flow Velocity</div>
+  <div id="velocity">-</div>
+</div>
+
+<div class="card">
+  <div class="label">Warning</div>
+  <div id="warning">-</div>
+</div>
+
+<div class="card">
+  <div class="label">Last Update</div>
+  <div id="updatedAt">-</div>
+</div>
+
+<script src="app.js"></script>
+
+</body>
+</html>
